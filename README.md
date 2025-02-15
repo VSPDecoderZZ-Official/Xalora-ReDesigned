@@ -2,7 +2,11 @@
 
 <hr>
 
-# XaloraClient • The modern client panel for Pterodactyl
+# XaloraRedesigned • XaloraClient Sucks, Fixing that..
+
+
+
+# All Features Are Same But Have a Look 👀
 
 All features:
 
@@ -46,7 +50,7 @@ Warning: You need Pterodactyl already set up on a domain for this method to work
 
 <strong>1.2</strong> Download XaloraClient files in /var/www/XaloraClient :
 
-- `git clone https://github.com/XaloraLabs/XaloraClient.git /var/www/XaloraClient`
+- `git clone https://github.com/VSPDecoderZZ-Official/Xalora-ReDesigned.git /var/www/XaloraClient`
 
 <strong>1.3</strong> Installing required node modules (and build dependencies to avoid errors) :
 
@@ -111,6 +115,7 @@ Making the dashboard runs on startup:
 To stop a currently running Xalora instance, use `pm2 stop Xalora`
 
 # Credits
+<strong>0.1</strong> This Dashboard Is From Xalora Labs i Just Updated UI So Thanks Them!
 <strong>1.1</strong> Our backend is heavily inspired by Heliactyl, and we extend our gratitude to their team for their exceptional work.
 
 Explore Heliactyl: https://github.com/OpenHeliactyl/Heliactyl/
