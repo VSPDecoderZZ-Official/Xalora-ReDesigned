@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./components/head') %>
+</head>
+<body class="text-white">
+  <%- include('./components/sidebar') %>
+<!-- Main Content -->
+<main class="flex-1 overflow-x-hidden overflow-y-auto">
+  <div class="container px-8 py-2 mx-auto">
+  </div>
+<main class="container flex-grow px-4 py-8 mx-auto">
+    <div class="flex items-center justify-between w-full pb-4 mx-auto">
+        <!-- Welcome text and subtext on the left -->
+        <div class="flex flex-col">
+            <h1 class="text-xl font-semibold mb-0.5" style="font-family: 'Cabin';">Dashboard</h1>
+            <p class="text-gray-400 text-md">View your available resources and an overview of your account.</p>
+        </div>
+
+        <!-- Breadcrumbs on the right -->
+        <nav aria-label="Breadcrumb" class="inline-flex px-4 py-2 transition-colors duration-200 rounded-xl bg-white/5">
+            <ol role="list" class="flex items-center space-x-2">
+                <li>
+                    <a href="#_" class="flex items-center gap-2 text-sm transition-colors duration-200 text-zinc-400 hover:text-zinc-200" aria-current="false">
+                        <svg
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler size-4 icons-tabler-outline icon-tabler-home"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+                        </svg>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="flex items-center">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4 text-zinc-400"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M9 6l6 6l-6 6"></path>
+                    </svg>
+                </li>
+                <li>
+                    <a href="#_" class="flex items-center gap-2 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white" aria-current="page">
+                        Dashboard
+                    </a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <% if (req.query.err === "CANNOTAFFORDRENEWAL") { %>
+      <div class="flex items-center justify-between p-4 mt-4 mb-4 text-red-400 border bg-red-500/10 border-red-500/20 rounded-xl">
+          <span>You need at least <%= settings.renewals.cost %> coins to purchase a server renewal!</span>
+          <button @click="showError = false" class="text-red-400 hover:text-red-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 6L6 18M6 6l12 12"></path>
+              </svg>
+          </button>
+      </div>
+  <% }if (req.query.success === 'RENEWED') { %>
+      <div class="flex items-center justify-between p-4 mt-4 mb-4 text-green-400 border bg-green-500/10 border-green-500/20 rounded-xl">
+      <span>Succesfully purchased renewal for server!</span>
+      <button @click="showError = false" class="text-green-400 hover:text-green-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"></path>
+          </svg>
+      </button>
+</div>
+<% } %>
+
+
+    <!-- Content -->
+    
+
+
+<div id="dailyCoinsBanner" class="hidden w-full mt-2 mb-8 border-l-4 bg-white/5 border-white/10 rounded-r-2xl">
+  <div class="p-6">
+    <h2 class="text-lg font-semibold text-white/90">Your daily reward is available.</h2>
+    <div class="space-y-5">
+      <p class="text-sm leading-5 text-white/60">
+        As a thank you for being a Pluto user, each day you can claim a reward of PlutoCoins (XPL)
+      </p>
+      <a class="transition hover:scale-95 cursor-pointer font-semibold gap-2 grow-0 items-center justify-center rounded-xl shrink-0 disabled:cursor-not-allowed inline-flex border focus:outline-none px-4 py-[9px] bg-emerald-700 border-emerald-700 text-white hover:bg-emerald-600 hover:border-emerald-600 focus:ring-4 focus:ring-emerald-900 disabled:bg-emerald-900 disabled:border-emerald-900 disabled:text-emerald-400 text-sm" href="/daily-coins">
+        <span class="pointer-events-none shrink-0">Claim rewards</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Advent -->
+<% if ( settings.advent) { %>
+<div class="container p-1 pl-12 mx-auto mt-8 mb-8 border bg-gradient-to-r from-indigo-500/10 to-indigo-600/15 border-indigo-500/10 rounded-3xl">
+  <div class="flex items-center justify-between">
+      <div class="space-y-4">
+          <div class="flex items-center gap-2">
+              <div class="inline-flex items-center px-3 py-1 text-xs font-medium text-indigo-300 rounded-full bg-indigo-500/20">
+                  <span class="mr-2 bg-indigo-400 rounded-full size-2"></span>
+                  Advent Calendar 2024
+              </div>
+          </div>
+          <h2 class="text-2xl font-semibold text-white heavy">BECAUSE 25 DAYS ISN'T LONG ENOUGH</h2>
+          <p class="text-white/60">Our advent calendar has started on November 11 and will end on December 25!</p>
+          <a href="/advent" class="inline-flex items-center justify-center gap-2 px-6 text-sm font-medium text-white transition-all duration-200 bg-indigo-500 rounded-full shadow h-11 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2 ring-offset-gray-200 hover:shadow-none">
+              Advent Calendar
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="size-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+              </svg>
+          </a>
+      </div>
+      <div class="hidden md:block">
+          <img src="https://i.imgur.com/e8hcEY1.png" alt="d" class="rounded-lg w-[400px] shadow-sm h-[250px] object-cover">
+      </div>
+  </div>
+</div>
+<% } %>
+
+    <!-- Welcome Message and Quick Links -->
+    <% if (!settings.advent) { %>
+    <div class="w-full border-l-4 mt-2 mb-8 bg-<%= settings.primarycolor %>-600/15 border-<%= settings.primarycolor %>-600 rounded-r-2xl">
+      <div class="p-6">
+        <h2 class="text-lg font-semibold text-white/90">Welcome back!</h2>
+        <div class="space-y-5">
+          <p class="text-sm leading-5 text-white/60">
+            From the <%= settings.name %> dashboard, you can manage your <%= settings.coinname %> wallet, deploy resources (ex. a server) and upgrade your deployments.
+          </p>
+          <a class="transition hover:scale-95 cursor-pointer font-semibold gap-2 grow-0 items-center justify-center rounded-xl shrink-0 disabled:cursor-not-allowed inline-flex border focus:outline-none px-4 py-[9px] bg-<%= settings.primarycolor %>-600 border-<%= settings.primarycolor %>-600 text-white hover:bg-<%= settings.primarycolor %>-600 hover:border-<%= settings.primarycolor %>-600 focus:ring-4 focus:ring-<%= settings.primarycolor %>-900 disabled:bg-<%= settings.primarycolor %>-900 disabled:border-<%= settings.primarycolor %>-900 disabled:text-<%= settings.primarycolor %>-400 text-sm" href="/servers/new">
+            <span class="pointer-events-none shrink-0">Get started</span>
+          </a>
+          <div class="flex flex-col xs:flex-row gap-3 items-start p-4 rounded-xl bg-white/5 text-<%= settings.primarycolor %>-100" dismissable="false">
+            <div class="shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="block w-5 h-5 shrink-0">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+    </svg>
+    
+            </div>
+            <div class="flex flex-col items-start flex-auto gap-3 md:flex-row md:items-center">
+              <div class="flex-auto space-y-3">
+                <div class="space-y-1">
+                  <h2 class="text-sm leading-5 font-semibold text-<%= settings.primarycolor %>-100">Has someone asked you to join their server on <%= settings.name %> as a subuser?</h2>
+                  <div class="text-sm leading-5 text-<%= settings.primarycolor %>-100/70">
+                    <p class="">
+                      You'll need to ask them to invite you now that you've signed up.
+                      There's no need to do anything until you receive that.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+<%
+               let ram = 0;
+               let disk = 0;
+               let cpu = 0;
+               let servers = pterodactyl.relationships.servers.data.length;
+               for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+                  ram = ram + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+                  disk = disk + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+                  cpu = cpu + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+               }
+            %>
+            <%
+            let totalMemory = packages.ram + extraresources.ram; // total available memory in MB
+            let usedMemory = ram; // memory currently used in MB
+            let memoryLeft = totalMemory - usedMemory; // calculate memory left in MB
+            let memoryLeftPercent = (memoryLeft / totalMemory) * 100; // calculate the percentage of memory left
+            %>
+            <%
+            let totaldisk = packages.disk + extraresources.disk; // total available disk in MB
+            let useddisk = disk; // disk currently used in MB
+            let diskLeft = totaldisk - useddisk; // calculate disk left in MB
+            let diskLeftPercent = (diskLeft / totaldisk) * 100; // calculate the percentage of disk left
+            %>
+            <%
+            let totalservers = packages.servers + extraresources.servers; // total available servers in MB
+            let usedservers = servers; // servers currently used in MB
+            let serversLeft = totalservers - usedservers; // calculate servers left in MB
+            let serversLeftPercent = (serversLeft / totalservers) * 100; // calculate the percentage of servers left
+            %>
+            <%
+            let totalCpu = packages.cpu + extraresources.cpu;
+            let usedCpu = cpu; 
+            let cpuLeft = totalCpu - usedCpu;
+            let cpuLeftPercent = (cpuLeft / totalCpu) * 100;
+            %>
+    
+    <div>
+      <dl class="grid grid-cols-1 mt-4 overflow-hidden divide-y shadow divide-white/5 rounded-2xl bg-white/5 md:grid-cols-4 md:divide-y-0 md:divide-x">
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-base font-medium text-white">Available RAM</dt>
+          <dd class="flex items-baseline justify-between mt-1 md:block lg:flex">
+            <div class="flex items-baseline text-2xl font-semibold text-<%= settings.primarycolor %>-600">
+            <%= packages.ram/1024 + extraresources.ram/1024 - ram/1024 %> GiB
+            </div>
+          </dd>
+        </div>
+    
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-base font-medium text-white">Available CPU</dt>
+          <dd class="flex items-baseline justify-between mt-1 md:block lg:flex">
+            <div class="flex items-baseline text-2xl font-semibold text-<%= settings.primarycolor %>-600">
+            <%= packages.cpu/100 + extraresources.cpu/100 - cpu/100 %> CPU core(s)
+            </div>
+          </dd>
+        </div>
+
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-base font-medium text-white">Available Disk</dt>
+          <dd class="flex items-baseline justify-between mt-1 md:block lg:flex">
+            <div class="flex items-baseline text-2xl font-semibold text-<%= settings.primarycolor %>-600">
+            <%= packages.disk/1024 + extraresources.disk/1024 - disk/1024 %> GiB
+            </div>
+          </dd>
+        </div>
+    
+        <div class="px-4 py-5 sm:p-6">
+          <dt class="text-base font-medium text-white">Available Server Slots</dt>
+          <dd class="flex items-baseline justify-between mt-1 md:block lg:flex">
+            <div class="flex items-baseline text-2xl font-semibold text-<%= settings.primarycolor %>-600">
+            <%= packages.servers + extraresources.servers - servers %> Slots
+            </div>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    
+    
+        <!-- Stats Section -->
+
+<script>
+
+    // Function to fetch daily coins status
+    async function checkDailyCoins() {
+        try {
+            const response = await fetch('/api/dailystatus');
+            const data = await response.json();
+            if (data.text === '1') {
+                document.getElementById('dailyCoinsBanner').classList.remove('hidden');
+                document.getElementById('dailyCoinsBanner').classList.add('animate-fadeIn');
+            }
+        } catch (error) {
+            console.error('Error checking daily coins:', error);
+        }
+    }
+</script>
+</main>
+
+        <!-- Footer -->
+        <%- include('./components/footer') %>
+    </div>
+
+    <script>
+        // Function to highlight the active tab
+        function setActiveTab() {
+            const currentPath = window.location.pathname;
+            const tabs = document.querySelectorAll('#tabs a');
+            tabs.forEach(tab => {
+                if (tab.getAttribute('href') === currentPath) {
+                    tab.classList.add('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.remove('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                } else {
+                    tab.classList.remove('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.add('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                }
+            });
+        }
+
+        // Set active tab on page load
+        setActiveTab();
+
+        // For demonstration purposes, simulate changing routes when clicking tabs
+        document.querySelectorAll('#tabs a').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = e.currentTarget.getAttribute('href');
+                history.pushState(null, '', href);
+                window.location.href = href;
+                setActiveTab();
+            });
+        });
+
+        // Listen for popstate events (back/forward browser navigation)
+        window.addEventListener('popstate', setActiveTab);
+    </script>
+</body>
+</html>
+<script>
+    var options = {
+      classname: 'loadingbar',
+      id: 'loadingbar'
+    };
+    var nanobar = new Nanobar(options);
+    function simulateLoading() {
+      nanobar.go(10); // Change this value to control the loading speed
+      setTimeout(function() {
+        nanobar.go(50);
+      }, 190); // Delay the progress update
+      setTimeout(function() {
+        nanobar.go(100);
+      }, 400); // Another delay
+    }
+    simulateLoading();
+  </script>
+  <style>
+    .loadingbar .bar {
+      background: #fb923c;
+      -webkit-box-shadow: 0px 4px 38px -15px #fb923c;
+      -moz-box-shadow: 0px 4px 38px -15px #fb923c;
+      box-shadow: 0px 4px 38px -15px #fb923c;
+      height: 1.85px;
+    }
+  </style>
+  <script>
+    let balance = document.getElementById("balance");
+    balance.textContent = <%= Math.floor(coins * 100) / 100 %>;
+  </script>

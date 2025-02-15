@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./components/head') %>
+  <body>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.html -->
+      <%- include('./components/sidebar') %>
+      <!-- partial -->
+      <div class="grid grid-cols-1 gap-4 mt-4 ml-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="overflow-hidden transition-shadow duration-300 shadow-none bg-white/5 rounded-2xl hover:shadow-lg">
+          <div class="p-6">
+            <div style="background-color: #11131900" class="main-panel">
+              <div style="background-color: #11131900" class="content-wrapper">
+            <h2 class="text-xl font-semibold mb-0.5 text-white" style="font-family: 'Cabin';">Edit Server</h2>
+            <p class="text-gray-400 text-md">Edit the resources of your server.</p>
+             <% if (req.query.err) { %>
+             <div style="border-radius: 15px;" class="alert">
+                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                 <% if (req.query.err == "MISSINGVARIABLE") { %>
+                     You have not filled out all of the server information.
+                 <% } else if (req.query.err == "ERRORONMODIFY") { %>
+                     There has been an error while attempting to modifying your server. Please alert an administrator to fix this problem.
+                 <% } else if (req.query.err == "MISSINGEGG") { %>
+                     The server type for this server is not registered as a valid server type, therefore your server's RAM, disk and/or CPU could not be changed.
+                 <% } else if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
+                   You must complete the captcha to prove you are human!
+                 <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
+                   You submitted an invalid captcha response, try again.
+                 <% } else { %>
+                     <% if (req.query.num) { %>
+                         <% if (!isNaN(parseFloat(req.query.num))) { %>
+                             <% if (req.query.err == "TOOLITTLERAM" || req.query.err == "TOOLITTLEDISK" || req.query.err == "TOOLITTLECPU") { %>
+                                 You must make a server with at least <b><%= req.query.num %></b>
+                                 <% if (req.query.err.slice(-3) == "RAM") { %>
+                                     MB RAM
+                                 <% } else if (req.query.err.slice(-4) == "DISK") { %>
+                                     MB disk
+                                 <% } else { // CPU %>
+                                     % CPU
+                                 <% } %>
+                                 if you want to modified a server with the server type you have selected.
+                             <% } else if (req.query.err == "TOOMUCHRAM" || req.query.err == "TOOMUCHDISK" || req.query.err == "TOOMUCHCPU") { %>
+                                 With the selected server type, you can have a maximum of <b><%= req.query.num %></b>
+                                 <% if (req.query.err.slice(-3) == "RAM") { %>
+                                     MB RAM
+                                 <% } else if (req.query.err.slice(-4) == "DISK") { %>
+                                     MB disk
+                                 <% } else { // CPU %>
+                                     % CPU
+                                 <% } %>
+                                 on the server.
+                             <% } else if (req.query.err == "EXCEEDRAM" || req.query.err == "EXCEEDDISK" || req.query.err == "EXCEEDCPU") { %>
+                                 The server could not be modified because you have requested to modified a server that exceeds your plan.
+                             <% } else { %>
+                                 I won't mind to add a little easter egg here. :)
+                             <% } %>
+                         <% } else { %>
+                             I won't mind to add a little easter egg here. :)
+                         <% } %>
+                     <% } else { %>
+                         I won't mind to add a little easter egg here. :)
+                     <% } %>
+                 <% } %>
+             </div>
+         <% } %>
+         <% if (req.query.id) { %>
+             <% if (pterodactyl.relationships.servers.data.filter(name => name.attributes.id == req.query.id).length == 1) {
+                 let serverinfo = pterodactyl.relationships.servers.data.filter(name => name.attributes.id == req.query.id)[0];
+                 let attemptegg = null;
+                 let attemptname = null;
+                 for (let [name, value] of Object.entries(settings.api.client.eggs)) {
+                     if (settings.api.client.eggs[name].info.egg == serverinfo.attributes.egg) {
+                         attemptegg = settings.api.client.eggs[name];
+                         attemptname = name;
+                     };
+                 };
+                 let egginfo = attemptegg ? attemptegg.display : "???";
+             %>
+            <div class="row">
+              <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <form class="forms-sample ">
+                      <div class="mt-2 mb-3 form-group" >
+                        <label class="text-white" for="exampleInputUsername1">Name:</label>
+                        <br>
+                        <input style="color: #9CA3AF; background-color: #2a3038; border: 0;border-radius: 15px; padding: 8px;" type="text" class="form-control" value="<%= serverinfo.attributes.name %> | Changing this will not do anything, use the panel">
+                      </div>
+
+                      <div class="mt-2 mb-3 form-group">
+                        <label class="text-white" for="InputCPU">CPU (Cores):</label>
+                        <br>
+                        <input style="color: #9CA3AF; background-color: #2a3038; border: 0; border-radius: 15px; padding: 8px;" type="number" class="form-control" id="InputCPU" placeholder="1" value="<%= serverinfo.attributes.limits.cpu/100 %>">
+                      </div>
+                      <div class="mt-2 mb-3 form-group">
+                        <label class="text-white" for="InputRAM">RAM (GBs):</label>
+                        <br>
+                        <input style="color: #9CA3AF; background-color: #2a3038; border: 0; border-radius: 15px; padding: 8px;" type="number" class="form-control" id="InputRAM" placeholder="2" value="<%= serverinfo.attributes.limits.memory/1024 %>">
+                      </div>
+                      <div class="mt-2 mb-3 form-group">
+                        <label class="text-white" for="InputDisk">Disk (GBs):</label>
+                        <br>
+                        <input style="color: #9CA3AF; background-color: #2a3038; border: 0; border-radius: 15px; padding: 8px;" type="number" class="form-control" id="InputDisk" placeholder="5" value="<%= serverinfo.attributes.limits.disk/1024 %>">
+                      </div>
+                      <div class="mt-2 mb-3 form-group">
+                        <label class="text-white" for="InputEgg">Egg:</label>
+                        <br>
+                        <select class="btn btn-secondary dropdown-toggle" style="background-color: #2a3038; border: 1px solid #2c2e33; color: #e4eaec; border-radius: 15px; padding: 8px;" disabled>
+                          <% for (let [name, value] of Object.entries(settings.api.client.eggs)) { %>
+                            <option value="<%= name %>"><%= value.display %></option>
+                          <% } %>
+                        </select>
+                      </div>
+                      <a href="javascript: submitChanges()" class="block w-full px-4 py-2 mt-3 text-sm font-medium text-center text-white transition bg-<%= settings.primarycolor %>-600 rounded-full hover:scale-95 hover:bg-<%= settings.primarycolor %>-700">
+                        Apply Changes
+                    </a>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      </div>    
+          <% } else { %>
+                <p style="margin-left: 5%;">Could not find server with the provided ID.</p>
+            <% } %>
+        <% } else { %>
+            <p style="margin-left: 5%;">Missing server ID.</p>
+        <% } %>
+          </div>
+          <!-- content-wrapper ends -->
+          <%- include('./components/footer') %>
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- Plugin js for this page -->
+    <script src="/assets/vendors/select2/select2.min.js"></script>
+    <script src="/assets/vendors/typeahead.js/typeahead.bundle.min.js"></script>
+    <script>
+      async function submitChanges() {
+        let ram = encodeURIComponent(document.getElementById("InputRAM").value * 1024);
+        let disk = encodeURIComponent(document.getElementById("InputDisk").value * 1024);
+        let cpu = encodeURIComponent(document.getElementById("InputCPU").value * 100);
+        document.location.href = `/modify?id=<%= req.query.id %>&ram=${ram}&disk=${disk}&cpu=${cpu}`;
+      };
+    </script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <%- include('./components/scripts') %>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="/assets/js/file-upload.js"></script>
+    <script src="/assets/js/typeahead.js"></script>
+    <script src="/assets/js/select2.js"></script>
+    <!-- End custom js for this page -->
+  </body>
+</html>

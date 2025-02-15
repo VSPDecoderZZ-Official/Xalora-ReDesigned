@@ -71,7 +71,7 @@ const Keyv = require("keyv");
 const db = new Keyv(settings.database);
 
 db.on('error', err => {
-  console.log(chalk.red("[Xalora] An error has occured when attempting to access the database."))
+  console.log(chalk.red("[Xalora Redesign] An error has occured when attempting to access the database."))
 });
 
 module.exports.db = db;
@@ -110,9 +110,9 @@ app.use(express.json({
 const listener = app.listen(settings.website.port, async function() {
   console.clear();
   console.log(chalk.gray("  "));
-  console.log(chalk.gray("  ") + chalk.bgBlue("  APPLICATION IS ONLINE  "));
+  console.log(chalk.gray("  ") + chalk.bgBlue("  Your Dashboard Is Ready!  "));
   console.log(chalk.gray("  "));
-  console.log(chalk.gray("  ") + chalk.cyan("[Xalora]") + chalk.white(" Checking for updates..."));
+  console.log(chalk.gray("  ") + chalk.cyan("[Xalora Redesign]") + chalk.white(" Checking for updates..."));
 
   try {
     let newsettings = JSON.parse(require("fs").readFileSync("./settings.json"));;
@@ -120,15 +120,15 @@ const listener = app.listen(settings.website.port, async function() {
     const latestVersion = response.data.tag_name;
 
     if (latestVersion !== newsettings.version) {
-      console.log(chalk.gray("  ") + chalk.cyan("[Xalora]") + chalk.yellow(" This is a Beta Release!"));
-      console.log(chalk.gray("  ") + chalk.cyan("[Xalora]") + chalk.white(` Current Version: ${newsettings.version}`));
+      console.log(chalk.gray("  ") + chalk.cyan("[Xalora Redesign]") + chalk.yellow(" This is a Beta Release!"));
+      console.log(chalk.gray("  ") + chalk.cyan("[Xalora Redesign]") + chalk.white(` Current Version: ${newsettings.version}`));
     } else {
-      console.log(chalk.gray("  ") + chalk.cyan("[Xalora]") + chalk.white(" Your application is up-to-date."));
+      console.log(chalk.gray("  ") + chalk.cyan("[Xalora Redesign]") + chalk.white(" Your application is up-to-date."));
     }
   } catch (error) {
-    console.error(chalk.gray("  ") + chalk.cyan("[Xalora]") + chalk.red(" Error checking for updates:"), error.message);
+    console.error(chalk.gray("  ") + chalk.cyan("[Xalora Redesign]") + chalk.red(" Error checking for updates:"), error.message);
   }
-  console.log(chalk.gray("  ") + chalk.cyan("[Xalora]") + chalk.white(" You can now access the dashboard at ") + chalk.underline(settings.api.client.oauth2.link + "/"));
+  console.log(chalk.gray("  ") + chalk.cyan("[Xalora Redesign]") + chalk.white(" You can now access the dashboard at ") + chalk.underline(settings.api.client.oauth2.link + "/"));
 
 });
 

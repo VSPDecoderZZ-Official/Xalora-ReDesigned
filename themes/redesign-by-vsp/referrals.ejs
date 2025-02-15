@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <%- include('./components/head') %>
+    </head>
+    <body class="text-white">
+        <%- include('./components/sidebar') %>
+    
+                <main class="flex-1 overflow-x-hidden overflow-y-auto">
+                    <div class="container mx-auto px-8 py-2">
+                        <!-- Content -->
+
+<main class="flex-grow container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center w-full mx-auto pb-4">
+        <!-- Welcome text and subtext on the left -->
+        <div class="flex flex-col">
+            <h1 class="text-xl font-semibold mb-0.5" style="font-family: 'Cabin';">Referrals</h1>
+            <p class="text-gray-400 text-md">Refer users to <%= settings.coinname %> for free rewards.</p>
+        </div>
+
+        <!-- Breadcrumbs on the right -->
+        <nav aria-label="Breadcrumb" class="inline-flex py-2 px-4 rounded-xl bg-white/5 transition-colors duration-200">
+            <ol role="list" class="flex items-center space-x-2">
+                <li>
+                    <a href="/dashboard" class="text-sm flex items-center gap-2 text-zinc-400 hover:text-zinc-200 transition-colors duration-200" aria-current="false">
+                        <svg
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler size-4 icons-tabler-outline icon-tabler-home"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+                        </svg>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="flex items-center">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4 text-zinc-400"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M9 6l6 6l-6 6"></path>
+                    </svg>
+                </li>
+                <li>
+                    <a href="#_" class="text-sm flex items-center gap-2 font-medium text-white/80 hover:text-white transition-colors duration-200" aria-current="page">
+                        Referrals
+                    </a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="bg-yellow-800/30 mt-5 text-yellow-300 p-4 rounded-2xl" role="alert">
+        <div class="flex items-center">
+          <div class="py-1">
+            <svg class="fill-current h-6 w-6 text-yellow-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="font-bold">This feature is still in beta phrase</p>
+            <p class="text-sm">Please do not use it. as it is not working.</p>
+          </div>
+        </div>
+      </div>
+
+
+    <div class="max-w-4xl mx-auto mt-5">
+
+        <!-- Notification Messages -->
+        
+
+        <div class="grid gap-8 md:grid-cols-2">
+            <!-- Create Referral Code -->
+            <div class="bg-white/5 rounded-2xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Create a Referral Code</h2>
+                <form id="createRef" method="get" class="space-y-4">
+                    <div>
+                        <label for="code" class="block text-sm font-medium text-gray-400 mb-1">Your Referral Code</label>
+                        <input type="text" name="code" id="code" class="w-full px-3 py-2 bg-white/10 border border-white/15 rounded-lg text-white placeholder-gray-500 focus:ring-<%= settings.primarycolor %>-500 focus:border-<%= settings.primarycolor %>-500" placeholder="Enter your custom code">
+                    </div>
+                    <button type="submit" class="w-full px-4 py-2 bg-<%= settings.primarycolor %>-600 text-white rounded-xl font-medium hover:bg-<%= settings.primarycolor %>-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-<%= settings.primarycolor %>-500">
+                        Create Code
+                    </button>
+                </form>
+            </div>
+
+            <!-- Claim Referral Code -->
+            <div class="bg-white/5 rounded-2xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Claim a Referral Code</h2>
+                <form action="/claim" method="get" class="space-y-4">
+                    <div>
+                        <label for="claim-code" class="block text-sm font-medium text-gray-400 mb-1">Friend's Referral Code</label>
+                        <input type="text" name="code" id="claim-code" class="w-full px-3 py-2 bg-white/10 border border-white/15 rounded-lg text-white placeholder-gray-500 focus:ring-<%= settings.primarycolor %>-500 focus:border-<%= settings.primarycolor %>-500" placeholder="Enter code to claim">
+                    </div>
+                    <button type="submit" class="w-full px-4 py-2 bg-<%= settings.primarycolor %>-600 text-white rounded-xl font-medium hover:bg-<%= settings.primarycolor %>-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-<%= settings.primarycolor %>-500">
+                        Claim Code
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Referral Benefits -->
+        <div class="mt-8 bg-white/5 rounded-2xl p-6">
+            <h2 class="text-xl font-semibold mb-4">Referral Benefits</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="rounded-2xl border-white/5 border p-6">
+                    <h3 class="text-lg font-medium mb-2">For You</h3>
+                    <p class="text-3xl font-bold text-<%= settings.primarycolor %>-400">80 <%= settings.coinname %></p>
+                    <p class="text-gray-400 mt-2">For every friend who uses your code</p>
+                </div>
+                <div class="rounded-2xl border-white/5 border p-6">
+                    <h3 class="text-lg font-medium mb-2">For Your Friend</h3>
+                    <p class="text-3xl font-bold text-<%= settings.primarycolor %>-400">250 <%= settings.coinname %></p>
+                    <p class="text-gray-400 mt-2">When they claim your referral code</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const referralsContainer = document.querySelector('#referral-codes-container');
+        const totalUsesDisplay = document.querySelector('#total-uses');
+        const createReferralButton = document.getElementById('createRef');
+    
+        async function fetchReferrals() {
+            try {
+                const response = await fetch('/referral/list', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.referrals) {
+                    displayReferrals(data.referrals);
+                }
+            } catch (error) {
+                console.error('Error fetching referrals:', error);
+            }
+        }
+    
+        function displayReferrals(referrals) {
+            const html = referrals.map(ref => `
+                <div class="flex flex-row gap-4 items-center flex-wrap mt-6">
+                    <p class="text-md lg:text-md text-gray-300 font-normal bg-gray-700/30 px-4 py-2 rounded-full"><%= settings.api.client.oauth2.link %>/${ref.code}</p>
+                </div>
+            `).join('');
+            referralsContainer.innerHTML = html;
+            const totalUses = referrals.reduce((acc, ref) => acc + ref.uses, 0);
+            totalUsesDisplay.textContent = `Your referral links/codes have had a total of ${totalUses} uses.`;
+        }
+    
+        function copyRef(code) {
+            navigator.clipboard.writeText(code);
+            alert('Referral code copied: ' + code);
+        }
+    
+        async function createReferralCode() {
+            try {
+                const response = await fetch('/referral/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.code) {
+                    fetchReferrals(); // Refresh the list after adding a new code
+                } else {
+                    console.error('Failed to create referral code:', data.error);
+                }
+            } catch (error) {
+                console.error('Error creating referral code:', error);
+            }
+        }
+    
+        createReferralButton.addEventListener('click', createReferralCode);
+    
+        fetchReferrals(); // Initial load of referrals
+    });
+    </script>
+
+
+        <!-- Footer -->
+        <%- include('./components/footer') %>
+    </div>
+
+    <script>
+        // Function to highlight the active tab
+        function setActiveTab() {
+            const currentPath = window.location.pathname;
+            const tabs = document.querySelectorAll('#tabs a');
+            tabs.forEach(tab => {
+                if (tab.getAttribute('href') === currentPath) {
+                    tab.classList.add('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.remove('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                } else {
+                    tab.classList.remove('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.add('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                }
+            });
+        }
+
+        // Set active tab on page load
+        setActiveTab();
+
+        // For demonstration purposes, simulate changing routes when clicking tabs
+        document.querySelectorAll('#tabs a').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = e.currentTarget.getAttribute('href');
+                history.pushState(null, '', href);
+                window.location.href = href;
+                setActiveTab();
+            });
+        });
+
+        // Listen for popstate events (back/forward browser navigation)
+        window.addEventListener('popstate', setActiveTab);
+    </script>
+</body>
+</html>
+<script>
+    var options = {
+      classname: 'loadingbar',
+      id: 'loadingbar'
+    };
+    var nanobar = new Nanobar(options);
+    function simulateLoading() {
+      nanobar.go(10); // Change this value to control the loading speed
+      setTimeout(function() {
+        nanobar.go(50);
+      }, 190); // Delay the progress update
+      setTimeout(function() {
+        nanobar.go(100);
+      }, 400); // Another delay
+    }
+    simulateLoading();
+  </script>
+  <style>
+    .loadingbar .bar {
+      background: #fb923c;
+      -webkit-box-shadow: 0px 4px 38px -15px #fb923c;
+      -moz-box-shadow: 0px 4px 38px -15px #fb923c;
+      box-shadow: 0px 4px 38px -15px #fb923c;
+      height: 1.85px;
+    }
+  </style>

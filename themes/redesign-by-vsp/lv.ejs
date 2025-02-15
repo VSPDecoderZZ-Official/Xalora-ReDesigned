@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./components/head') %>
+</head>
+<body class="text-white">
+  
+  <%- include('./components/sidebar') %>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto">
+                <div class="container mx-auto px-8 py-2">
+                    <!-- Content -->
+<!-- Main Content -->
+<main class="flex-grow container mx-auto px-4 py-8">
+  
+    <div class="flex justify-between items-center w-full mx-auto pb-4">
+        <!-- Welcome text and subtext on the left -->
+        <div class="flex flex-col">
+            <h1 class="text-xl font-semibold mb-0.5" style="font-family: 'Cabin';">Linkvertise Page</h1>
+            <p class="text-gray-400 text-md">Earn free rewards for keeping this page open.</p>
+        </div>
+
+        <!-- Breadcrumbs on the right -->
+        <nav aria-label="Breadcrumb" class="inline-flex py-2 px-4 rounded-xl bg-white/5 transition-colors duration-200">
+            <ol role="list" class="flex items-center space-x-2">
+                <li>
+                    <a href="/dashboard" class="text-sm flex items-center gap-2 text-zinc-400 hover:text-zinc-200 transition-colors duration-200" aria-current="false">
+                        <svg
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler size-4 icons-tabler-outline icon-tabler-home"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+                        </svg>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="flex items-center">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4 text-zinc-400"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M9 6l6 6l-6 6"></path>
+                    </svg>
+                </li>
+                <li>
+                    <a href="#_" class="text-sm flex items-center gap-2 font-medium text-white/80 hover:text-white transition-colors duration-200" aria-current="page">
+                        Linkvertise
+                    </a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <% if (req.query.err == 'REACHEDDAILYLIMIT') { %>
+        <div class="mb-4 mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center justify-between">
+            <span>You have reached you daily limit of linkvertise links</span>
+            <button @click="showError = false" class="text-red-400 hover:text-red-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    <% } %>
+    <!-- AFK Page Content -->
+    <div class="mt-24 flex justify-center">
+        <div class="text-center">
+            
+            <p class="text-sm tracking-widest text-gray-500 uppercase mb-3 mt-16">WHY NOT COMPLETE LINKVERTISE LINKS WHILE YOU AFK?</p>
+                <p class="text-2xl font-bold text-white"><%= settings.linkvertise.dailyLimit %> Linkvertise Links Per Day</p>
+                <p class="mt-2 text-sm text-gray-300">For every Linkvertise link you complete, you will get <%= settings.linkvertise.coins %> <%= settings.coinname %>.</p>
+                <div class="mt-4 flex justify-center">
+                    <a href="/lv/gen" class="cursor-pointer transition ease-in-out group relative flex justify-center rounded-full border border-transparent py-2 px-6 text-sm font-medium text-white bg-<%= settings.primarycolor %>-600 hover:bg-<%= settings.primarycolor %>-700 focus:outline-none">
+                        Generate Link
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+        <!-- Footer -->
+        <%- include('./components/footer') %>
+    </div>
+
+    <script>
+        // Function to highlight the active tab
+        function setActiveTab() {
+            const currentPath = window.location.pathname;
+            const tabs = document.querySelectorAll('#tabs a');
+            tabs.forEach(tab => {
+                if (tab.getAttribute('href') === currentPath) {
+                    tab.classList.add('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.remove('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                } else {
+                    tab.classList.remove('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.add('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                }
+            });
+        }
+
+        // Set active tab on page load
+        setActiveTab();
+
+        // For demonstration purposes, simulate changing routes when clicking tabs
+        document.querySelectorAll('#tabs a').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = e.currentTarget.getAttribute('href');
+                history.pushState(null, '', href);
+                window.location.href = href;
+                setActiveTab();
+            });
+        });
+
+        // Listen for popstate events (back/forward browser navigation)
+        window.addEventListener('popstate', setActiveTab);
+    </script>
+</body>
+</html>
+<script>
+    var options = {
+      classname: 'loadingbar',
+      id: 'loadingbar'
+    };
+    var nanobar = new Nanobar(options);
+    function simulateLoading() {
+      nanobar.go(10); // Change this value to control the loading speed
+      setTimeout(function() {
+        nanobar.go(50);
+      }, 190); // Delay the progress update
+      setTimeout(function() {
+        nanobar.go(100);
+      }, 400); // Another delay
+    }
+    simulateLoading();
+  </script>
+  <style>
+    .loadingbar .bar {
+      background: #fb923c;
+      -webkit-box-shadow: 0px 4px 38px -15px #fb923c;
+      -moz-box-shadow: 0px 4px 38px -15px #fb923c;
+      box-shadow: 0px 4px 38px -15px #fb923c;
+      height: 1.85px;
+    }
+  </style>
+
+<script>
+  let afkTime = 0;
+  let afkInterval = setInterval(() => {
+    afkTime++;
+    document.getElementById("afk-time").textContent = `AFK Time: ${afkTime} seconds`;
+  }, 1000);
+
+</script>

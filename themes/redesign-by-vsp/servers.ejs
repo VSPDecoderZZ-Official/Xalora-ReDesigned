@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./components/head') %>
+
+</head>
+<body class="text-white">
+
+        <!-- Sidebar -->
+        <%- include('./components/sidebar') %>
+        
+                
+                    <!-- Content -->
+<!-- Main Content -->
+<main class="container flex-grow px-4 py-8 mx-auto">
+
+    <div class="flex items-center justify-between w-full pb-4 mx-auto">
+        <!-- Welcome text and subtext on the left -->
+        <div class="flex flex-col">
+            <h1 class="text-xl font-semibold mb-0.5" style="font-family: 'Cabin';">Servers</h1>
+            <p class="text-gray-400 text-md">An overview of your servers.</p>
+        </div>
+
+        <!-- Breadcrumbs on the right -->
+        <nav aria-label="Breadcrumb" class="inline-flex px-4 py-2 transition-colors duration-200 rounded-xl bg-white/5">
+            <ol role="list" class="flex items-center space-x-2">
+                <li>
+                    <a href="#_" class="flex items-center gap-2 text-sm transition-colors duration-200 text-zinc-400 hover:text-zinc-200" aria-current="false">
+                        <svg
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler size-4 icons-tabler-outline icon-tabler-home"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+                        </svg>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="flex items-center">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4 text-zinc-400"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M9 6l6 6l-6 6"></path>
+                    </svg>
+                </li>
+                <li>
+                    <a href="#_" class="flex items-center gap-2 text-sm font-medium transition-colors duration-200 text-white/80 hover:text-white" aria-current="page">
+                        Servers
+                    </a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Content -->
+
+    <% if (req.query.err) { %>
+        
+        <% }if (req.query.err == 'DELETEDSERVER') { %>
+            <div class="flex items-center justify-between p-4 mt-4 mb-4 text-green-400 border bg-green-500/10 border-green-500/20 rounded-xl">
+            <span>Success! Your server has been deleted, feel free to create a new one now!</span>
+                <button @click="showError = false" class="text-green-400 hover:text-green-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+        </div>
+        <% } %>
+
+    
+
+
+   
+
+    
+    <!-- Servers List -->
+    <div class="mt-4">
+        <div class="verflow-hidden">
+            <div>
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                    <div class="relative w-full">
+                        <h3 class="font-semibold leading-6 text-white text-md" style="font-family: 'Cabin'">All servers</h3>
+                    </div>
+                    <div class="flex gap-2 sm:ml-auto sm:flex-none">
+                        <a href="/servers/new" class="flex items-center justify-center gap-2 px-5 text-sm font-medium text-white transition-all transition duration-200 bg-<%= settings.primarycolor %>-600 rounded-full shadow hover:scale-95 h-11 hover:bg-<%= settings.primarycolor %>-700 focus:ring-2 focus:ring-<%= settings.primarycolor %>-800 focus:ring-offset-2 ring-offset-gray-200 hover:shadow-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus size-4">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M12 5l0 14"></path>
+                                <path d="M5 12l14 0"></path>
+                            </svg>
+                            New Server
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Server Cards -->
+            <div class="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 lg:grid-cols-3">
+                <% if (pterodactyl && pterodactyl.relationships && pterodactyl.relationships.servers && pterodactyl.relationships.servers.data && pterodactyl.relationships.servers.data.length === 0) { %>
+                    <h4 class="mb-1 text-lg font-semibold text-white">No Servers Yet!</h4>
+                <% } else if (pterodactyl && pterodactyl.relationships && pterodactyl.relationships.servers && pterodactyl.relationships.servers.data) { %>
+                    <% for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) { %>
+                        <div class="overflow-hidden transition-shadow duration-300 shadow-none bg-white/5 rounded-2xl hover:shadow-lg">
+                            <div class="p-6">
+                                <h4 class="mb-1 text-lg font-semibold text-white">
+                                    <%= pterodactyl.relationships.servers.data[i].attributes.name.length > 40
+                                        ? pterodactyl.relationships.servers.data[i].attributes.name.slice(0, 40) + "..."
+                                        : pterodactyl.relationships.servers.data[i].attributes.name %>
+                                </h4>
+                                <p class="text-xs text-gray-300">UUID: <%= pterodactyl.relationships.servers.data[i].attributes.identifier %></p>
+                                <p class="mb-6 text-xs text-gray-300">ID: <%= pterodactyl.relationships.servers.data[i].attributes.id %></p>
+                                
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="px-2 py-1 text-xs font-semibold text-gray-100 rounded-lg bg-white/10">
+                                        <%= pterodactyl.relationships.servers.data[i].attributes.limits.memory / 1024 %> GiB RAM
+                                    </span>
+                                    <span class="px-2 py-1 text-xs font-semibold text-gray-100 rounded-lg bg-white/10">
+                                        <%= pterodactyl.relationships.servers.data[i].attributes.limits.cpu / 100 %> CPU core(s)
+                                    </span>
+                                    <span class="px-2 py-1 text-xs font-semibold text-gray-100 rounded-lg bg-white/10">
+                                        <%= pterodactyl.relationships.servers.data[i].attributes.limits.disk / 1024 %> GiB disk
+                                    </span>
+                                </div>
+                                
+                                <% if (settings.renewals.status) { %>
+                                    <a type="button" href="/renew?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>"  
+                                       id="renew-status-btn-<%= pterodactyl.relationships.servers.data[i].attributes.id %>" 
+                                       class="transition block w-full mb-3 hover:scale-95 text-center bg-<%= settings.primarycolor %>-600 text-sm hover:bg-<%= settings.primarycolor %>-700 text-white font-medium py-2 px-4 rounded-full">
+                                        Loading...
+                                    </a>
+                                    <script>
+                                        async function fetchRenewalStatus(serverId) {
+                                            try {
+                                                const response = await fetch(`/api/renewalstatus?id=${serverId}`);
+                                                const data = await response.json();
+                                                const renewButton = document.getElementById(`renew-status-btn-${serverId}`);
+                                
+                                                if (data.error) {
+                                                    renewButton.textContent = 'Error fetching status';
+                                                    renewButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                                                } else if (data.text === 'Disabled') {
+                                                    renewButton.textContent = 'Renewals Disabled';
+                                                    renewButton.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                                                } else if (data.text === 'Renewed') {
+                                                    renewButton.textContent = 'Server Renewed';
+                                                    renewButton.classList.add('bg-green-600', 'hover:bg-green-700');
+                                                } else if (data.text === 'Last chance to renew!') {
+                                                    renewButton.textContent = 'Renew Now!';
+                                                    renewButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                                                } else if (data.text) {
+                                                    const remainingTime = data.text;
+                                                    startCountdown(renewButton, remainingTime);
+                                                }
+                                            } catch (err) {
+                                                console.error('Failed to fetch renewal status:', err);
+                                                const renewButton = document.getElementById(`renew-status-btn-${serverId}`);
+                                                renewButton.textContent = 'Failed to fetch status';
+                                                renewButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                                            }
+                                        }
+                                
+                                        function startCountdown(renewButton, timeText) {
+                                            const timeParts = timeText.match(/(\d+) days? and (\d+(?:\.\d+)?) hours?/);
+                                            if (!timeParts) {
+                                                renewButton.textContent = 'Invalid time format';
+                                                renewButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                                                return;
+                                            }
+                                
+                                            let days = parseInt(timeParts[1]);
+                                            let hours = parseFloat(timeParts[2]);
+                                
+                                            const updateTimer = () => {
+                                                if (days <= 0 && hours <= 0) {
+                                                    renewButton.textContent = 'Renew Now!';
+                                                    renewButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                                                    clearInterval(interval);
+                                                    return;
+                                                }
+                                
+                                                renewButton.textContent = `Renew Server in ${days} day${days === 1 ? '' : 's'} and ${hours.toFixed(2)} hour${hours === 1 ? '' : 's'}`;
+                                
+                                                // Change button color based on remaining time
+                                                if (days > 4) {
+                                                    renewButton.classList.add('bg-green-600', 'hover:bg-green-700');
+                                                } else if (days > 2) {
+                                                    renewButton.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                                                } else {
+                                                    renewButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                                                }
+                                
+                                                // Decrease time
+                                                hours -= 0.01;
+                                                if (hours < 0) {
+                                                    days--;
+                                                    hours = 23.99;
+                                                }
+                                            };
+                                
+                                            const interval = setInterval(updateTimer, 36 * 1000); // Update every 36 seconds
+                                            updateTimer(); // Initial update
+                                        }
+                                
+                                        fetchRenewalStatus('<%= pterodactyl.relationships.servers.data[i].attributes.id %>');
+                                    </script>
+                                <% } %>
+                                
+                                
+                                <a href="/servers/edit?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>" class="block w-full px-4 py-2 mb-3 text-sm font-medium text-center text-white transition bg-<%= settings.primarycolor %>-600 rounded-full hover:scale-95 hover:bg-<%= settings.primarycolor %>-700">
+                                    Edit Server
+                                </a>
+                                <a href="/delete?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>" class="block w-full px-4 py-2 mb-3 text-sm font-medium text-center text-white transition bg-red-600 rounded-full hover:scale-95 hover:bg-red-700">
+                                    Delete Server
+                                </a>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } %>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+        <!-- Footer -->
+        <%- include('./components/footer') %>
+    </div>
+
+    <script>
+        // Function to highlight the active tab
+        function setActiveTab() {
+            const currentPath = window.location.pathname;
+            const tabs = document.querySelectorAll('#tabs a');
+            tabs.forEach(tab => {
+                if (tab.getAttribute('href') === currentPath) {
+                    tab.classList.add('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.remove('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                } else {
+                    tab.classList.remove('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.add('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                }
+            });
+        }
+
+        // Set active tab on page load
+        setActiveTab();
+
+        // For demonstration purposes, simulate changing routes when clicking tabs
+        document.querySelectorAll('#tabs a').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = e.currentTarget.getAttribute('href');
+                history.pushState(null, '', href);
+                window.location.href = href;
+                setActiveTab();
+            });
+        });
+
+        // Listen for popstate events (back/forward browser navigation)
+        window.addEventListener('popstate', setActiveTab);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8d17edb95e9391bf',t:'MTcyODc0NDkwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+<script>
+    var options = {
+      classname: 'loadingbar',
+      id: 'loadingbar'
+    };
+    var nanobar = new Nanobar(options);
+    function simulateLoading() {
+      nanobar.go(10); // Change this value to control the loading speed
+      setTimeout(function() {
+        nanobar.go(50);
+      }, 190); // Delay the progress update
+      setTimeout(function() {
+        nanobar.go(100);
+      }, 400); // Another delay
+    }
+    simulateLoading();
+  </script>
+  <style>
+    .loadingbar .bar {
+      background: #fb923c;
+      -webkit-box-shadow: 0px 4px 38px -15px #fb923c;
+      -moz-box-shadow: 0px 4px 38px -15px #fb923c;
+      box-shadow: 0px 4px 38px -15px #fb923c;
+      height: 1.85px;
+    }
+  </style>
+  <script>
+    let balance = document.getElementById("balance");
+    balance.textContent = <%= Math.floor(coins * 100) / 100 %>;
+  </script>
+  
+  

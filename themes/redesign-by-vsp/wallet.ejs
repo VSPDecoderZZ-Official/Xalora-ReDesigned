@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./components/head') %>
+</head>
+<body class="text-white">
+    <%- include('./components/sidebar') %>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto">
+                <div class="container mx-auto px-8 py-2">
+                    <!-- Content -->
+<style>
+    .dashboard-card {
+        border-radius: 1.05rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .balance-card {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        backdrop-filter: blur(5px);
+    }
+    .balance-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: var(--bg-image);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: blur(10px);
+        z-index: -2;
+        transform: scale(1.1);
+    }
+    .balance-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(67, 56, 202, 0.8), rgba(59, 130, 246, 0.8));
+        z-index: -1;
+    }
+    .currency-switcher button {
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    .currency-switcher button.active {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    .transaction-item {
+        transition: all 0.3s ease;
+    }
+    .chart-container {
+        height: 300px;
+    }
+</style>
+
+<main class="container mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center w-full mx-auto pb-6">
+        <div class="flex flex-col mb-4 md:mb-0">
+            <h1 class="text-2xl font-semibold mb-1" style="font-family: 'Cabin';">Wallet</h1>
+            <p class="text-gray-400 text-sm">Manage your XPL and XRS balances and transactions.</p>
+        </div>
+
+        <!-- Breadcrumbs on the right -->
+        <nav aria-label="Breadcrumb" class="inline-flex py-2 px-4 rounded-xl bg-white/5 transition-colors duration-200">
+            <ol role="list" class="flex items-center space-x-2">
+                <li>
+                    <a href="#_" class="text-sm flex items-center gap-2 text-zinc-400 hover:text-zinc-200 transition-colors duration-200" aria-current="false">
+                        <svg
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler size-4 icons-tabler-outline icon-tabler-home"
+                        >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+                        </svg>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="flex items-center">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right size-4 text-zinc-400"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M9 6l6 6l-6 6"></path>
+                    </svg>
+                </li>
+                <li>
+                    <a href="#_" class="text-sm flex items-center gap-2 font-medium text-white/80 hover:text-white transition-colors duration-200" aria-current="page">
+                        Wallet
+                    </a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <% if (req.query.err) { %>
+        <% if (req.query.err == "MISSINGFIELDS") { %>
+            <div class="mb-4 mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center justify-between">
+                <span>You must fill out all fields in the form.</b></span>
+                <button @click="showError = false" class="text-red-400 hover:text-red-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <% } else if (req.query.err == "CANNOTGIFTYOURSELF") { %>
+                <div class="mb-4 mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center justify-between">
+                    <span>You cannot transfer <%= settings.coinname %> to yourself -_-</b></span>
+                    <button @click="showError = false" class="text-red-400 hover:text-red-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            <% } else if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
+                <div class="mb-4 mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center justify-between">
+                    <span>You must complete the captcha to prove you are human!</b></span>
+                    <button @click="showError = false" class="text-red-400 hover:text-red-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
+                <div class="mb-4 mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center justify-between">
+                    <span>You submitted an invalid captcha response, try again.</b></span>
+                    <button @click="showError = false" class="text-red-400 hover:text-red-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            <% } else if (req.query.err == "CANTAFFORD") { %>
+                <div class="mb-4 mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center justify-between">
+                    <span>You do not have enough <%= settings.coinname %> to transfer this amount.</b></span>
+                    <button @click="showError = false" class="text-red-400 hover:text-red-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            <% } else if (req.query.err == "USERDOESNTEXIST") { %>
+                <div class="mb-4 mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center justify-between">
+                    <span>No user with the ID you tried to send coins to has logged in to the dashboard.</b></span>
+                    <button @click="showError = false" class="text-red-400 hover:text-red-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            <% } else if (req.query.err == "TOOLOWCOINS") { %>
+                <div class="mb-4 mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 flex items-center justify-between">
+                    <span>You must transfer 1 or more <%= settings.coinname %>.</b></span>
+                    <button @click="showError = false" class="text-red-400 hover:text-red-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            <% } %>
+            <% } else if (req.query.success) { %>
+                <div class="mb-4 mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 flex items-center justify-between">
+                    <span>Success! The <%= settings.coinname %> have been transferred</b></span>
+                    <button @click="showError = false" class="text-green-400 hover:text-green-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            
+                <% } %>
+
+
+    <!-- Balance Card -->
+    <div class="dashboard-card balance-card p-8 mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Your Balance</h2>
+        </div>
+        <div class="text-center py-8">
+            <p  class="text-5xl font-bold mb-4"><span><%= coins %></span> <%= settings.coinname %></p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="showTransferModal()" class="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold hover:bg-blue-50 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 mb-1 inline-flex mr-0.5">
+  <path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95 28.897 28.897 0 0 0 15.293-7.155.75.75 0 0 0 0-1.114A28.897 28.897 0 0 0 3.105 2.288Z" />
+</svg>
+Send
+                </button>
+            </div>
+        </div>
+    </div>      
+    <div class="bg-blue-800/30 mt-5 text-white-300 p-4 rounded-2xl" role="alert">
+  <div class="flex items-center">
+    <div class="py-1">
+      <svg class="fill-current h-6 w-6 text-white-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/>
+      </svg>
+    </div>
+    <div>
+      <p class="font-bold">The balance is updated every 5 minutes.</p>
+      <p class="text-sm"></p>
+    </div>
+  </div>
+</div>
+
+    <!-- Recent Transactions -->
+    <div class="dashboard-card bg-white/5 p-6 mt-8 mb-8">
+        <h2 class="text-xl font-semibold mb-4">Recent Transactions</h2>
+        <div id="recentTransactions" class="space-y-4 mb-4">
+            <!-- Transactions will be dynamically inserted here -->
+        </div>
+        <button id="showAllTransactions" class="w-full text-center text-<%= settings.primarycolor %>-400 hover:text-<%= settings.primarycolor %>-300 transition-colors duration-200">Show All Transactions</button>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 hidden">
+        <!-- Spending Chart -->
+        <div class="dashboard-card p-6">
+            <h2 class="text-xl font-semibold mb-4">Spending Overview</h2>
+            <div id="spendingChart" class="chart-container"></div>
+        </div>
+        <!-- Balance History Chart -->
+        <div class="dashboard-card p-6">
+            <h2 class="text-xl font-semibold mb-4">Balance History</h2>
+            <div id="balanceHistoryChart" class="chart-container"></div>
+        </div>
+    </div>
+</main>
+
+<!-- Transfer Modal -->
+<div id="transferModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
+    <div id="modalContent" class="bg-[#191c20] p-8 rounded-lg max-w-md w-full transform scale-95 opacity-0 transition-all duration-300 ease-in-out">
+        <h2 class="text-2xl font-semibold text-white mb-4">Transfer <span id="transferCurrency"></span></h2>
+        <form id="transferForm" class="space-y-4">
+            <div>
+                <label for="InputCoins" class="block text-sm font-medium text-gray-300">Receiver Address</label>
+                <input type="text" id="InputID" name="InputID" required class="mt-1 block w-full rounded-md bg-white/5 border border-white/10 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label for="InputCoins" class="block text-sm font-medium text-gray-300">Amount</label>
+                <input type="number" id="InputCoins" name="InputCoins" required min="1" step="1" class="mt-1 block w-full rounded-md bg-white/5 border border-white/10 text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button type="button" onclick="hideTransferModal()" class="text-gray-400 hover:text-white transition-colors">Cancel</button>
+                <button type="button" onclick="submitGift()" class="bg-<%= settings.primarycolor %>-600 text-white px-4 font-medium py-2 rounded-full hover:bg-<%= settings.primarycolor %>-700 transition-colors">Transfer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    async function submitGift() {
+      let id = encodeURIComponent(document.getElementById("InputID").value);
+      let coins = encodeURIComponent(document.getElementById("InputCoins").value);
+      document.location.href = `/giftcoins?id=${id}&coins=${coins}`;
+    };
+  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let currentCurrency = 'XPL';
+let transactions = [];
+let balanceHistory = [];
+
+// Array of background image URLs
+const backgroundImages = [];
+
+// Function to set a random background
+function setRandomBackground() {
+    const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+    const selectedBackground = backgroundImages[randomIndex];
+    document.querySelector('.balance-card').style.backgroundImage = `url('${selectedBackground}')`;
+}
+
+
+function showTransferModal() {
+    document.getElementById('transferCurrency').textContent = "<%= settings.coinname %>";
+    const modal = document.getElementById('transferModal');
+    const modalContent = document.getElementById('modalContent');
+    
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    
+    setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function hideTransferModal() {
+    const modal = document.getElementById('transferModal');
+    const modalContent = document.getElementById('modalContent');
+    
+    modalContent.classList.remove('scale-100', 'opacity-100');
+    modalContent.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(() => {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+    }, 300);
+}
+
+// Call initDashboard when the DOM is loaded
+document.addEventListener('DOMContentLoaded', initDashboard);
+
+</script>
+
+        <!-- Footer -->
+        <%- include('./components/footer') %>
+    </div>
+
+    <script>
+        // Function to highlight the active tab
+        function setActiveTab() {
+            const currentPath = window.location.pathname;
+            const tabs = document.querySelectorAll('#tabs a');
+            tabs.forEach(tab => {
+                if (tab.getAttribute('href') === currentPath) {
+                    tab.classList.add('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.remove('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                } else {
+                    tab.classList.remove('border-<%= settings.primarycolor %>-500', 'text-<%= settings.primarycolor %>-500', 'font-medium');
+                    tab.classList.add('border-transparent', 'hover:border-gray-300', 'hover:text-white');
+                }
+            });
+        }
+
+        // Set active tab on page load
+        setActiveTab();
+
+        // For demonstration purposes, simulate changing routes when clicking tabs
+        document.querySelectorAll('#tabs a').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = e.currentTarget.getAttribute('href');
+                history.pushState(null, '', href);
+                window.location.href = href;
+                setActiveTab();
+            });
+        });
+
+        // Listen for popstate events (back/forward browser navigation)
+        window.addEventListener('popstate', setActiveTab);
+    </script>
+</body>
+</html>
+<script>
+    var options = {
+      classname: 'loadingbar',
+      id: 'loadingbar'
+    };
+    var nanobar = new Nanobar(options);
+    function simulateLoading() {
+      nanobar.go(10); // Change this value to control the loading speed
+      setTimeout(function() {
+        nanobar.go(50);
+      }, 190); // Delay the progress update
+      setTimeout(function() {
+        nanobar.go(100);
+      }, 400); // Another delay
+    }
+    simulateLoading();
+  </script>
+  <style>
+    .loadingbar .bar {
+      background: #fb923c;
+      -webkit-box-shadow: 0px 4px 38px -15px #fb923c;
+      -moz-box-shadow: 0px 4px 38px -15px #fb923c;
+      box-shadow: 0px 4px 38px -15px #fb923c;
+      height: 1.85px;
+    }
+  </style>
+  

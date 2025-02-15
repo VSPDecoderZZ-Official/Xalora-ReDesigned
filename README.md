@@ -5,6 +5,8 @@
 # XaloraRedesigned • XaloraClient Sucks, Fixing that..
 
 
+## Important
+Theme Will Be Default At The First You Need to Change It From Admin Section
 
 # All Features Are Same But Have a Look 👀
 
